@@ -1,6 +1,13 @@
 #!/usr/bin/env node
 
+import * as Commander from "commander";
 import * as Twitter from "twitter";
+
+Commander
+    .option("--screen-name <screen-name>")
+    .parse(process.argv);
+
+console.log(Commander.screenName);
 
 const client = new Twitter({
     access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
@@ -9,16 +16,20 @@ const client = new Twitter({
     consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
 });
 
-async function getTweets() {
+async function getTweets(screenName: string) {
     return new Promise<object[]>((resolve, reject) => {
-        client.get("statuses/user_timeline", (error, response) => {
+        const options: { screen_name?: string } = {};
+        if (screenName !== undefined) {
+            options.screen_name = screenName;
+        }
+        client.get("statuses/user_timeline", options, (error, response) => {
             resolve(response);
         });
     });
 }
 
 (async () => {
-    const tweets = await getTweets();
+    const tweets = await getTweets(Commander.screenName);
     console.log(tweets);
 })()
 .catch(
