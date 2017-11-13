@@ -1,0 +1,12 @@
+{
+  "name": "TwitterUserAnalyzer2",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@types/node": "^8.0.51",
+    "tslint": "^5.8.0",
+    "twitter": "^1.7.1",
+    "typescript": "^2.6.1"
+  }
+}
