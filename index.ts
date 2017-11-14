@@ -26,6 +26,7 @@ async function getTweets(screenName: string) {
             const options: GetUserTimeLineOptions = {
                 count: 200,
                 exclude_replies: false,
+                include_rts: false,
                 trim_user: true,
             };
             if (screenName !== undefined) {
