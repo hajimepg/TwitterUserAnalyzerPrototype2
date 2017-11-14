@@ -34,6 +34,11 @@ async function getTweets(screenName: string) {
             options.screen_name = screenName;
         }
         client.get("statuses/user_timeline", options, (error, response) => {
+            if (error) {
+                reject(error);
+                return;
+            }
+
             resolve(response);
         });
     });
