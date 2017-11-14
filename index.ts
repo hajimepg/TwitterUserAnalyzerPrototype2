@@ -3,6 +3,8 @@
 import * as Commander from "commander";
 import * as Twitter from "twitter";
 
+import GetUserTimeLineOptions from "./getUserTimeLineOptions";
+
 Commander
     .option("--screen-name <screen-name>")
     .parse(process.argv);
@@ -13,15 +15,6 @@ const client = new Twitter({
     consumer_key: process.env.TWITTER_CONSUMER_KEY,
     consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
 });
-
-/* tslint:disable:variable-name */
-class GetUserTimeLineOptions {
-    public count: number;
-    public trim_user: boolean;
-    public exclude_replies: boolean;
-    public screen_name?: string;
-}
-/* tslint:enable:variable-name */
 
 async function getTweets(screenName: string) {
     return new Promise<object[]>((resolve, reject) => {
