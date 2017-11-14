@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import * as Commander from "commander";
+import * as lodash from "lodash";
 import * as Twitter from "twitter";
 
 import GetUserTimeLineOptions from "./getUserTimeLineOptions";
@@ -19,22 +20,38 @@ const client = new Twitter({
 
 async function getTweets(screenName: string) {
     return new Promise<Tweet[]>((resolve, reject) => {
-        const options: GetUserTimeLineOptions = {
-            count: 200,
-            exclude_replies: false,
-            trim_user: true,
-        };
-        if (screenName !== undefined) {
-            options.screen_name = screenName;
-        }
-        client.get("statuses/user_timeline", options, (error, response) => {
-            if (error) {
-                reject(error);
-                return;
+        function getTweetsInternal(maxId?: number) {
+            const options: GetUserTimeLineOptions = {
+                count: 200,
+                exclude_replies: false,
+                trim_user: true,
+            };
+            if (screenName !== undefined) {
+                options.screen_name = screenName;
+            }
+            if (maxId !== undefined) {
+                options.max_id = maxId;
             }
 
-            resolve(response);
-        });
+            client.get("statuses/user_timeline", options, (error, response: Tweet[]) => {
+                if (error) {
+                    reject(error);
+                    return;
+                }
+
+                const lastTweetId = lodash.last(response).id;
+                console.log(`count=${response.length} lastTweetId=${lastTweetId}` );
+
+                if (response.length === 0 || (response.length === 1 && maxId === lastTweetId)) {
+                    resolve(response);
+                }
+                else {
+                    getTweetsInternal(lastTweetId);
+                }
+            });
+        }
+
+        getTweetsInternal();
     });
 }
 
