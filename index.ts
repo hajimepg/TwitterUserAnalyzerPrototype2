@@ -4,6 +4,7 @@ import * as Commander from "commander";
 import * as Twitter from "twitter";
 
 import GetUserTimeLineOptions from "./getUserTimeLineOptions";
+import Tweet from "./tweet";
 
 Commander
     .option("--screen-name <screen-name>")
@@ -17,7 +18,7 @@ const client = new Twitter({
 });
 
 async function getTweets(screenName: string) {
-    return new Promise<object[]>((resolve, reject) => {
+    return new Promise<Tweet[]>((resolve, reject) => {
         const options: GetUserTimeLineOptions = {
             count: 200,
             exclude_replies: false,
