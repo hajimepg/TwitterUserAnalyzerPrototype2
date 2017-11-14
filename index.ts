@@ -20,7 +20,7 @@ const client = new Twitter({
 
 async function getTweets(screenName: string) {
     return new Promise<Tweet[]>((resolve, reject) => {
-        let result: Tweet[] = [];
+        const result: Tweet[] = [];
 
         function getTweetsInternal(maxId?: number) {
             const options: GetUserTimeLineOptions = {
@@ -45,12 +45,16 @@ async function getTweets(screenName: string) {
                 const lastTweetId = lodash.last(response).id;
                 console.log(`count=${response.length} lastTweetId=${lastTweetId}` );
 
-                result = result.concat(response);
-
                 if (response.length === 0 || (response.length === 1 && maxId === lastTweetId)) {
                     resolve(result);
                 }
                 else {
+                    for (const tweet of response) {
+                        if (result.findIndex((t) => t.id === tweet.id) === -1) {
+                            result.push(tweet);
+                        }
+                    }
+
                     getTweetsInternal(lastTweetId);
                 }
             });
