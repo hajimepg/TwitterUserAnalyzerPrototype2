@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import * as fs from "fs";
+
 import * as Commander from "commander";
 import * as lodash from "lodash";
 import * as Twitter from "twitter";
@@ -7,16 +9,27 @@ import * as Twitter from "twitter";
 import GetUserTimeLineOptions from "./getUserTimeLineOptions";
 import Tweet from "./tweet";
 
+import Stub from "./stub";
+
 Commander
     .option("--screen-name <screen-name>")
+    .option("--create-stub")
+    .option("--use-stub")
     .parse(process.argv);
 
-const client = new Twitter({
-    access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
-    access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
-    consumer_key: process.env.TWITTER_CONSUMER_KEY,
-    consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-});
+let client: { get };
+
+if (Commander.useStub) {
+    client = Stub;
+}
+else {
+    client = new Twitter({
+        access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
+        access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
+        consumer_key: process.env.TWITTER_CONSUMER_KEY,
+        consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+    });
+}
 
 async function getTweets(screenName: string) {
     return new Promise<Tweet[]>((resolve, reject) => {
@@ -66,6 +79,11 @@ async function getTweets(screenName: string) {
 
 (async () => {
     const tweets = await getTweets(Commander.screenName);
+
+    if (Commander.createStub) {
+        fs.writeFileSync("./stub.json", JSON.stringify(tweets, null, 4));
+    }
+
     console.log(tweets.length);
 })()
 .catch(
