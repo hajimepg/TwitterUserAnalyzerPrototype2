@@ -3,6 +3,7 @@
 import * as fs from "fs";
 
 import * as Commander from "commander";
+import * as DateFns from "date-fns";
 import * as lodash from "lodash";
 import * as Twitter from "twitter";
 
@@ -84,7 +85,15 @@ async function getTweets(screenName: string) {
         fs.writeFileSync("./stub.json", JSON.stringify(tweets, null, 4));
     }
 
-    console.log(tweets.length);
+    const groupingFunc = (tweet) => DateFns.format(DateFns.parse(tweet.created_at), "YYYY-MM-DD");
+    const groupByDate: object = lodash.groupBy(tweets, groupingFunc);
+    for (const prop in groupByDate) {
+        if (groupByDate.hasOwnProperty(prop) === false) {
+            continue;
+        }
+
+        console.log(`${prop}: ${groupByDate[prop].length}`);
+    }
 })()
 .catch(
     (error) => console.log(error)
