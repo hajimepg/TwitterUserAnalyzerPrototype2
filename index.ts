@@ -85,8 +85,14 @@ async function getTweets(screenName: string) {
         fs.writeFileSync("./stub.json", JSON.stringify(tweets, null, 4));
     }
 
-    const groupingFunc = (tweet) => DateFns.format(DateFns.parse(tweet.created_at), "YYYY-MM-DD");
-    const groupByDate: object = lodash.groupBy(tweets, groupingFunc);
+    const JSTOffsetHours = 9;
+    for (const tweet of tweets) {
+        tweet.created_at_jst = DateFns.addHours(DateFns.parse(tweet.created_at), JSTOffsetHours);
+    }
+
+    const groupByDate: object = lodash.groupBy(tweets,
+        (tweet) => DateFns.format(tweet.created_at_jst, "YYYY-MM-DD")
+    );
     for (const prop in groupByDate) {
         if (groupByDate.hasOwnProperty(prop) === false) {
             continue;

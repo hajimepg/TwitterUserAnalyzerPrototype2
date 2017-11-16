@@ -1,6 +1,7 @@
 /* tslint:disable:variable-name */
 export default class Tweet {
     public created_at: string;
+    public created_at_jst: Date;
     public id: number;
     public id_str: string;
     public text: string;
