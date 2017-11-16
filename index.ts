@@ -95,16 +95,21 @@ async function getTweets(screenName: string) {
         tweet.created_at_jst = DateFns.addHours(DateFns.parse(tweet.created_at), JSTOffsetHours);
     }
 
-    const groupByDate: object = lodash.groupBy(tweets,
-        (tweet) => DateFns.format(tweet.created_at_jst, "YYYY-MM-DD")
-    );
-    for (const prop in groupByDate) {
-        if (groupByDate.hasOwnProperty(prop) === false) {
-            continue;
-        }
+    const tweetsDate: string[] = tweets.map((tweet) => DateFns.format(tweet.created_at_jst, "YYYY-MM-DD"));
+    const minDate: string = lodash.min(tweetsDate);
+    const maxDate: string = lodash.max(tweetsDate);
 
-        console.log(`${prop}: ${groupByDate[prop].length}`);
+    const result = {};
+    for (const day of DateFns.eachDay(minDate, maxDate)) {
+        const key = DateFns.format(DateFns.addHours(day, JSTOffsetHours), "YYYY-MM-DD");
+        result[key] = 0;
     }
+
+    for (const tweetDate of tweetsDate) {
+        result[tweetDate]++;
+    }
+
+    console.log(result);
 })()
 .catch(
     (error) => console.log(error)
