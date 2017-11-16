@@ -56,10 +56,15 @@ async function getTweets(screenName: string) {
                     return;
                 }
 
+                if (response.length === 0) {
+                    resolve(result);
+                    return;
+                }
+
                 const lastTweetId = lodash.last(response).id;
                 console.log(`count=${response.length} lastTweetId=${lastTweetId}` );
 
-                if (response.length === 0 || (response.length === 1 && maxId === lastTweetId)) {
+                if (response.length === 1 && maxId === lastTweetId) {
                     resolve(result);
                 }
                 else {
