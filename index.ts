@@ -84,13 +84,7 @@ async function getTweets(screenName: string) {
     });
 }
 
-(async () => {
-    const tweets = await getTweets(Commander.screenName);
-
-    if (Commander.createStub) {
-        fs.writeFileSync("./stub.json", JSON.stringify(tweets, null, 4));
-    }
-
+function summarizeDailyTweetCount(tweets: Tweet[]): DailyTweetCount[] {
     const JSTOffsetHours = 9;
     for (const tweet of tweets) {
         tweet.created_at_jst = DateFns.addHours(DateFns.parse(tweet.created_at), JSTOffsetHours);
@@ -115,6 +109,18 @@ async function getTweets(screenName: string) {
 
         target.count++;
     }
+
+    return result;
+}
+
+(async () => {
+    const tweets = await getTweets(Commander.screenName);
+
+    if (Commander.createStub) {
+        fs.writeFileSync("./stub.json", JSON.stringify(tweets, null, 4));
+    }
+
+    const result = summarizeDailyTweetCount(tweets);
 
     console.log(result);
 })()
