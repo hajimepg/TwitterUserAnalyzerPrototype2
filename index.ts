@@ -153,6 +153,25 @@ function summarizeReplyCount(tweets: Tweet[]) {
         target.count++;
     }
 
+    result.sort(
+        (a, b) => {
+            const countDiff = b.count - a.count;
+            if (countDiff !== 0) {
+                return countDiff;
+            }
+
+            if (a.screen_name < b.screen_name) {
+                return -1;
+            }
+            else if (a.screen_name > b.screen_name) {
+                return 1;
+            }
+            else {
+                return 0;
+            }
+        }
+    );
+
     return result;
 }
 
