@@ -175,6 +175,43 @@ function summarizeReplyCount(tweets: Tweet[]): Array<{screen_name: string, count
     return result;
 }
 
+function summarizeHashtagCount(tweets: Tweet[]) {
+    const result: Array<{hashtag: string, count: number}> = [];
+
+    for (const tweet of tweets) {
+        for (const hashtag of tweet.entities.hashtags) {
+            let target = result.find((r) => r.hashtag === hashtag.text);
+            if (target === undefined) {
+                target = { hashtag: hashtag.text, count: 0 };
+                result.push(target);
+            }
+
+            target.count++;
+        }
+    }
+
+    result.sort(
+        (a, b) => {
+            const countDiff = b.count - a.count;
+            if (countDiff !== 0) {
+                return countDiff;
+            }
+
+            if (a.hashtag < b.hashtag) {
+                return -1;
+            }
+            else if (a.hashtag > b.hashtag) {
+                return 1;
+            }
+            else {
+                return 0;
+            }
+        }
+    );
+
+    return result;
+}
+
 (async () => {
     const tweets = await getTweets(Commander.screenName);
 
@@ -190,6 +227,9 @@ function summarizeReplyCount(tweets: Tweet[]): Array<{screen_name: string, count
 
     const replyTweetCount = summarizeReplyCount(tweets);
     console.log(replyTweetCount);
+
+    const hashtagTweetCount = summarizeHashtagCount(tweets);
+    console.log(hashtagTweetCount);
 })()
 .catch(
     (error) => console.log(error)

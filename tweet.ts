@@ -5,7 +5,12 @@ export default class Tweet {
     public id_str: string;
     public text: string;
     public truncated: boolean;
-    public entities: { hashtags: any[], symbols: any[], user_mentions: any[], urls: any[] };
+    public entities: {
+        hashtags: Array<{ text: string, indicies: number[] }>,
+        symbols: any[],
+        user_mentions: any[],
+        urls: any[]
+    };
     public source: string;
     public in_reply_to_status_id: number;
     public in_reply_to_status_id_str: string;
