@@ -85,12 +85,14 @@ async function getTweets(screenName: string) {
 }
 
 function summarizeDailyTweetCount(tweets: Tweet[]): DailyTweetCount[] {
+    const tweetsCreatedAtJst: Date[] = [];
+
     const JSTOffsetHours = 9;
     for (const tweet of tweets) {
-        tweet.created_at_jst = DateFns.addHours(DateFns.parse(tweet.created_at), JSTOffsetHours);
+        tweetsCreatedAtJst.push(DateFns.addHours(DateFns.parse(tweet.created_at), JSTOffsetHours));
     }
 
-    const tweetsDate: string[] = tweets.map((tweet) => DateFns.format(tweet.created_at_jst, "YYYY-MM-DD"));
+    const tweetsDate: string[] = tweetsCreatedAtJst.map((createdAt) => DateFns.format(createdAt, "YYYY-MM-DD"));
     const minDate: string = lodash.min(tweetsDate);
     const maxDate: string = lodash.max(tweetsDate);
 
