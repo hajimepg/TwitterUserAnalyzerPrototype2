@@ -115,6 +115,19 @@ function summarizeDailyTweetCount(tweets: Tweet[]): DailyTweetCount[] {
     return result;
 }
 
+function summarizeDayHourTweetCount(tweets: Tweet[]) {
+    const tweetsCreatedAtJst: Date[] = [];
+
+    const JSTOffsetHours = 9;
+    for (const tweet of tweets) {
+        tweetsCreatedAtJst.push(DateFns.addHours(DateFns.parse(tweet.created_at), JSTOffsetHours));
+    }
+
+    for (const createdAt of tweetsCreatedAtJst) {
+        console.log(`${createdAt}: day=${createdAt.getDay()}, hour=${createdAt.getHours()}`);
+    }
+}
+
 (async () => {
     const tweets = await getTweets(Commander.screenName);
 
@@ -125,6 +138,8 @@ function summarizeDailyTweetCount(tweets: Tweet[]): DailyTweetCount[] {
     const result = summarizeDailyTweetCount(tweets);
 
     console.log(result);
+
+    summarizeDayHourTweetCount(tweets);
 })()
 .catch(
     (error) => console.log(error)
