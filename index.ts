@@ -136,7 +136,7 @@ function summarizeDayHourTweetCount(tweets: Tweet[]): DailyHourlyTweetCount[] {
     return result;
 }
 
-function summarizeReplyCount(tweets: Tweet[]) {
+function summarizeReplyCount(tweets: Tweet[]): Array<{screen_name: string, count: number}> {
     const result: Array<{screen_name: string, count: number}> = [];
 
     for (const tweet of tweets) {
