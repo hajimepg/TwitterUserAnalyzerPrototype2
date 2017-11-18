@@ -136,6 +136,26 @@ function summarizeDayHourTweetCount(tweets: Tweet[]): DailyHourlyTweetCount[] {
     return result;
 }
 
+function summarizeReplyCount(tweets: Tweet[]) {
+    const result: Array<{screen_name: string, count: number}> = [];
+
+    for (const tweet of tweets) {
+        if (tweet.in_reply_to_screen_name === null) {
+            continue;
+        }
+
+        let target = result.find((r) => r.screen_name === tweet.in_reply_to_screen_name);
+        if (target === undefined) {
+            target = { screen_name: tweet.in_reply_to_screen_name, count: 0};
+            result.push(target);
+        }
+
+        target.count++;
+    }
+
+    return result;
+}
+
 (async () => {
     const tweets = await getTweets(Commander.screenName);
 
@@ -148,6 +168,9 @@ function summarizeDayHourTweetCount(tweets: Tweet[]): DailyHourlyTweetCount[] {
 
     const dayHourTweetCount = summarizeDayHourTweetCount(tweets);
     console.log(JSON.stringify(dayHourTweetCount, null, 4));
+
+    const replyTweetCount = summarizeReplyCount(tweets);
+    console.log(replyTweetCount);
 })()
 .catch(
     (error) => console.log(error)
