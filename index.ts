@@ -116,7 +116,7 @@ function summarizeDailyTweetCount(tweets: Tweet[]): DailyTweetCount[] {
     return result;
 }
 
-function summarizeDayHourTweetCount(tweets: Tweet[]) {
+function summarizeDayHourTweetCount(tweets: Tweet[]): DailyHourlyTweetCount[] {
     const tweetsCreatedAtJst: Date[] = [];
 
     const JSTOffsetHours = 9;
@@ -128,11 +128,12 @@ function summarizeDayHourTweetCount(tweets: Tweet[]) {
     for (const day of ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]) {
         result.push(new DailyHourlyTweetCount(day));
     }
-    console.log(JSON.stringify(result, null, 4));
 
     for (const createdAt of tweetsCreatedAtJst) {
-        console.log(`${createdAt}: day=${createdAt.getDay()}, hour=${createdAt.getHours()}`);
+        result[createdAt.getDay()].hours[createdAt.getHours()].count++;
     }
+
+    return result;
 }
 
 (async () => {
@@ -142,11 +143,11 @@ function summarizeDayHourTweetCount(tweets: Tweet[]) {
         fs.writeFileSync("./stub.json", JSON.stringify(tweets, null, 4));
     }
 
-    const result = summarizeDailyTweetCount(tweets);
+    const dailyTweetCount = summarizeDailyTweetCount(tweets);
+    console.log(dailyTweetCount);
 
-    console.log(result);
-
-    summarizeDayHourTweetCount(tweets);
+    const dayHourTweetCount = summarizeDayHourTweetCount(tweets);
+    console.log(JSON.stringify(dayHourTweetCount, null, 4));
 })()
 .catch(
     (error) => console.log(error)
