@@ -7,6 +7,7 @@ import * as DateFns from "date-fns";
 import * as lodash from "lodash";
 import * as Twitter from "twitter";
 
+import DailyTweetCount from "./dailyTweetCount";
 import GetUserTimeLineOptions from "./getUserTimeLineOptions";
 import Tweet from "./tweet";
 
@@ -99,14 +100,20 @@ async function getTweets(screenName: string) {
     const minDate: string = lodash.min(tweetsDate);
     const maxDate: string = lodash.max(tweetsDate);
 
-    const result = {};
+    const result: DailyTweetCount[] = [];
     for (const day of DateFns.eachDay(minDate, maxDate)) {
         const key = DateFns.format(DateFns.addHours(day, JSTOffsetHours), "YYYY-MM-DD");
-        result[key] = 0;
+        result.push(new DailyTweetCount(key));
     }
 
     for (const tweetDate of tweetsDate) {
-        result[tweetDate]++;
+        const target = result.find((r) => r.date === tweetDate);
+        if (target === undefined) {
+            console.warn(`${tweetDate} is not in result`);
+            continue;
+        }
+
+        target.count++;
     }
 
     console.log(result);
