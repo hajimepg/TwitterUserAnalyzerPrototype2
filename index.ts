@@ -8,6 +8,7 @@ import * as lodash from "lodash";
 import * as Twitter from "twitter";
 
 import DailyTweetCount from "./dailyTweetCount";
+import DailyHourlyTweetCount from "./daylyHourlyTweetCount";
 import GetUserTimeLineOptions from "./getUserTimeLineOptions";
 import Tweet from "./tweet";
 
@@ -123,15 +124,9 @@ function summarizeDayHourTweetCount(tweets: Tweet[]) {
         tweetsCreatedAtJst.push(DateFns.addHours(DateFns.parse(tweet.created_at), JSTOffsetHours));
     }
 
-    const result: Array<{ day, hours }> = [];
+    const result: DailyHourlyTweetCount[] = [];
     for (const day of ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]) {
-        const hours: Array<{day, hour, count}> = [];
-        for (const hour of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]) {
-            hours.push({ day, hour, count: 0 });
-        }
-
-        const innerResult: { day, hours } = { day, hours };
-        result.push(innerResult);
+        result.push(new DailyHourlyTweetCount(day));
     }
     console.log(JSON.stringify(result, null, 4));
 
