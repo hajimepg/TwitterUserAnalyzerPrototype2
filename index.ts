@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import * as assert from "assert";
 import * as fs from "fs";
 
 import * as Commander from "commander";
@@ -15,10 +16,17 @@ import Tweet from "./tweet";
 import Stub from "./stub";
 
 Commander
+    .option("--format <format>")
     .option("--screen-name <screen-name>")
     .option("--create-stub")
     .option("--use-stub")
     .parse(process.argv);
+
+const format = Commander.format || "html";
+if (format !== "json" && format !== "html") {
+    console.error(`Invalid format: ${format}`);
+    process.exit(1);
+}
 
 let client: { get };
 
@@ -212,6 +220,26 @@ function summarizeHashtagCount(tweets: Tweet[]) {
     return result;
 }
 
+function createFileName(): string {
+    const currentDate: string = DateFns.format(new Date(), "YYYY-MM-DD");
+    let filename: string;
+
+    for (let i: number = 0; ; i++) {
+        if (i === 0) {
+            filename = `./output-${currentDate}.json`;
+        }
+        else {
+            filename = `./output-${currentDate}_${i}.json`;
+        }
+
+        if (fs.existsSync(filename) === false) {
+            break;
+        }
+    }
+
+    return filename;
+}
+
 (async () => {
     const tweets = await getTweets(Commander.screenName);
 
@@ -219,17 +247,22 @@ function summarizeHashtagCount(tweets: Tweet[]) {
         fs.writeFileSync("./stub.json", JSON.stringify(tweets, null, 4));
     }
 
-    const dailyTweetCount = summarizeDailyTweetCount(tweets);
-    console.log(dailyTweetCount);
+    /* tslint:disable:object-literal-sort-keys */
+    const output = {
+        dailyTweetCount: summarizeDailyTweetCount(tweets),
+        dayHourTweetCount: summarizeDayHourTweetCount(tweets),
+        replyTweetCount: summarizeReplyCount(tweets),
+        hashtagTweetCount: summarizeHashtagCount(tweets),
+    };
+    /* tslint:enable:object-literal-sort-keys */
 
-    const dayHourTweetCount = summarizeDayHourTweetCount(tweets);
-    console.log(JSON.stringify(dayHourTweetCount, null, 4));
-
-    const replyTweetCount = summarizeReplyCount(tweets);
-    console.log(replyTweetCount);
-
-    const hashtagTweetCount = summarizeHashtagCount(tweets);
-    console.log(hashtagTweetCount);
+    if (format === "json") {
+        const fileName: string = createFileName();
+        fs.writeFileSync(fileName, JSON.stringify(output, null, 4));
+    }
+    else {
+        assert.fail(`Unsupported output format: "${format}"`);
+    }
 })()
 .catch(
     (error) => console.log(error)
