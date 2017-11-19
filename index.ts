@@ -294,14 +294,26 @@ function createDirName(): string {
             fs.copyFileSync(src, dest);
         }
 
+        const JSTOffsetHours = 9;
+        const maxDate = lodash.last(output.dailyTweetCount).date;
+        const minDate = DateFns.format(DateFns.addHours(DateFns.subDays(maxDate, 30), JSTOffsetHours), "YYYY-MM-DD");
+
+        const dailyTweetCount30Days: object[] = [];
+        for (const day of DateFns.eachDay(minDate, maxDate)) {
+            const date = DateFns.format(DateFns.addHours(day, JSTOffsetHours), "YYYY-MM-DD");
+
+            const record = output.dailyTweetCount.find((r) => r.date === date);
+            if (record === undefined) {
+                dailyTweetCount30Days.push( { label: date.substr(-2), count: 0 });
+            }
+            else {
+                dailyTweetCount30Days.push({ label: record.date.substr(-2), count: record.count });
+            }
+        }
+
         /* tslint:disable:object-literal-sort-keys */
         const data = {
-            dailyTweetCount: output.dailyTweetCount.map((daily: DailyTweetCount) => {
-                return {
-                    label: daily.date.substr(-2),
-                    count: daily.count,
-                };
-            }),
+            dailyTweetCount: dailyTweetCount30Days,
             replyTweetCount: output.replyTweetCount.slice(0, 10),
             hashtagTweetCount: output.hashtagTweetCount.slice(0, 10),
         };
