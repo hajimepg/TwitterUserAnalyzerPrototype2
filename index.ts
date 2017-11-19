@@ -16,7 +16,6 @@ import GetUserTimeLineOptions from "./getUserTimeLineOptions";
 import Tweet from "./tweet";
 
 import Stub from "./stub";
-import { dirname } from "path";
 
 Commander
     .option("--format <format>")
