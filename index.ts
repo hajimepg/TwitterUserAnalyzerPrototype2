@@ -262,6 +262,27 @@ function createDirName(): string {
     return filename;
 }
 
+function convertDaiylTweetCountToHtmlOutput(dailyTweetCount: DailyTweetCount[]): object[] {
+    const JSTOffsetHours = 9;
+    const maxDate = lodash.last(dailyTweetCount).date;
+    const minDate = DateFns.format(DateFns.addHours(DateFns.subDays(maxDate, 30), JSTOffsetHours), "YYYY-MM-DD");
+
+    const result: object[] = [];
+    for (const day of DateFns.eachDay(minDate, maxDate)) {
+        const date = DateFns.format(DateFns.addHours(day, JSTOffsetHours), "YYYY-MM-DD");
+
+        const record = dailyTweetCount.find((r) => r.date === date);
+        if (record === undefined) {
+            result.push({ label: date.substr(-2), count: 0 });
+        }
+        else {
+            result.push({ label: record.date.substr(-2), count: record.count });
+        }
+    }
+
+    return result;
+}
+
 (async () => {
     const tweets = await getTweets(Commander.screenName);
 
@@ -293,26 +314,9 @@ function createDirName(): string {
             fs.copyFileSync(src, dest);
         }
 
-        const JSTOffsetHours = 9;
-        const maxDate = lodash.last(output.dailyTweetCount).date;
-        const minDate = DateFns.format(DateFns.addHours(DateFns.subDays(maxDate, 30), JSTOffsetHours), "YYYY-MM-DD");
-
-        const dailyTweetCount30Days: object[] = [];
-        for (const day of DateFns.eachDay(minDate, maxDate)) {
-            const date = DateFns.format(DateFns.addHours(day, JSTOffsetHours), "YYYY-MM-DD");
-
-            const record = output.dailyTweetCount.find((r) => r.date === date);
-            if (record === undefined) {
-                dailyTweetCount30Days.push( { label: date.substr(-2), count: 0 });
-            }
-            else {
-                dailyTweetCount30Days.push({ label: record.date.substr(-2), count: record.count });
-            }
-        }
-
         /* tslint:disable:object-literal-sort-keys */
         const data = {
-            dailyTweetCount: dailyTweetCount30Days,
+            dailyTweetCount: convertDaiylTweetCountToHtmlOutput(output.dailyTweetCount),
             replyTweetCount: output.replyTweetCount.slice(0, 10),
             hashtagTweetCount: output.hashtagTweetCount.slice(0, 10),
         };
