@@ -294,9 +294,13 @@ function createDirName(): string {
             fs.copyFileSync(src, dest);
         }
 
+        /* tslint:disable:object-literal-sort-keys */
         const data = {
             replyTweetCount: output.replyTweetCount.slice(0, 10),
+            hashtagTweetCount: output.hashtagTweetCount.slice(0, 10),
         };
+        /* tslint:enable:object-literal-sort-keys */
+
         Nunjucks.configure("templates");
         const indexFileName = path.join(dirName, "index.html");
         fs.writeFileSync(indexFileName, Nunjucks.render("index.njk", data));

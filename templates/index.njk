@@ -52,16 +52,12 @@
             <div id="hashtags">
                 <h1>Hashtags</h1>
                 <table><tbody>
-                    <tr><td><span class="hashtagLink">#daiteitoku</span></td><td>1035</td></tr>
-                    <tr><td><span class="hashtagLink">#pixiv</span></td><td>950</td></tr>
-                    <tr><td><span class="hashtagLink">#テイルズオブエクシリア</span></td><td>714</td></tr>
-                    <tr><td><span class="hashtagLink">#SimCity</span></td><td>505</td></tr>
-                    <tr><td><span class="hashtagLink">#musan</span></td><td>451</td></tr>
-                    <tr><td><span class="hashtagLink">#冒険者ギルド物語</span></td><td>326</td></tr>
-                    <tr><td><span class="hashtagLink">#animelog</span></td><td>251</td></tr>
-                    <tr><td><span class="hashtagLink">#DIVA2nd</span></td><td>211</td></tr>
-                    <tr><td><span class="hashtagLink">#disgaia4</span></td><td>204</td></tr>
-                    <tr><td><span class="hashtagLink">#steinsgate</span></td><td>201</td></tr>
+                    {% for item in hashtagTweetCount %}
+                        <tr>
+                            <td><span class="hashtagLink">#{{ item.hashtag }}</span></td>
+                            <td>{{ item.count }}</td>
+                        </tr>
+                    {% endfor %}
                 </tbody></table>
             </div>
 
