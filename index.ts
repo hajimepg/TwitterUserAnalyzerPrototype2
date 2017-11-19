@@ -296,7 +296,12 @@ function createDirName(): string {
 
         /* tslint:disable:object-literal-sort-keys */
         const data = {
-            dailyTweetCount: output.dailyTweetCount,
+            dailyTweetCount: output.dailyTweetCount.map((daily: DailyTweetCount) => {
+                return {
+                    label: daily.date.substr(-2),
+                    count: daily.count,
+                };
+            }),
             replyTweetCount: output.replyTweetCount.slice(0, 10),
             hashtagTweetCount: output.hashtagTweetCount.slice(0, 10),
         };
