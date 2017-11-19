@@ -40,16 +40,12 @@
             <div id="mentions">
                 <h1>Mentions</h1>
                 <table><tbody>
-                    <tr><td><span class="userNameLink">@poyow</span></td><td>16411</td></tr>
-                    <tr><td><span class="userNameLink">@kagamiuta</span></td><td>8552</td></tr>
-                    <tr><td><span class="userNameLink">@itati0</span></td><td>7793</td></tr>
-                    <tr><td><span class="userNameLink">@kotohito</span></td><td>6384</td></tr>
-                    <tr><td><span class="userNameLink">@msbtjp</span></td><td>5856</td></tr>
-                    <tr><td><span class="userNameLink">@keroyon_</span></td><td>4528</td></tr>
-                    <tr><td><span class="userNameLink">@rio_tc</span></td><td>4391</td></tr>
-                    <tr><td><span class="userNameLink">@tot_main</span></td><td>4312</td></tr>
-                    <tr><td><span class="userNameLink">@kiriminn</span></td><td>3809</td></tr>
-                    <tr><td><span class="userNameLink">@hiyorineko</span></td><td>3093</td></tr>
+                    {% for item in replyTweetCount %}
+                        <tr>
+                            <td><a href="https://twitter.com/{{ item.screen_name }}" target="_blank" class="userNameLink">@{{ item.screen_name }}</a></td>
+                            <td>{{ item.count }}</td>
+                        </tr>
+                    {% endfor %}
                 </tbody></table>
             </div>
 

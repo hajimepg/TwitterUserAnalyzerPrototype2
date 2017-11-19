@@ -294,7 +294,9 @@ function createDirName(): string {
             fs.copyFileSync(src, dest);
         }
 
-        const data = output;
+        const data = {
+            replyTweetCount: output.replyTweetCount.slice(0, 10),
+        };
         Nunjucks.configure("templates");
         const indexFileName = path.join(dirName, "index.html");
         fs.writeFileSync(indexFileName, Nunjucks.render("index.njk", data));
