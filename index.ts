@@ -2,10 +2,12 @@
 
 import * as assert from "assert";
 import * as fs from "fs";
+import * as path from "path";
 
 import * as Commander from "commander";
 import * as DateFns from "date-fns";
 import * as lodash from "lodash";
+import * as Nunjucks from "nunjucks";
 import * as Twitter from "twitter";
 
 import DailyTweetCount from "./dailyTweetCount";
@@ -14,6 +16,7 @@ import GetUserTimeLineOptions from "./getUserTimeLineOptions";
 import Tweet from "./tweet";
 
 import Stub from "./stub";
+import { dirname } from "path";
 
 Commander
     .option("--format <format>")
@@ -240,6 +243,26 @@ function createFileName(): string {
     return filename;
 }
 
+function createDirName(): string {
+    const currentDate: string = DateFns.format(new Date(), "YYYY-MM-DD");
+    let filename: string;
+
+    for (let i: number = 0; ; i++) {
+        if (i === 0) {
+            filename = `./output-${currentDate}`;
+        }
+        else {
+            filename = `./output-${currentDate}_${i}`;
+        }
+
+        if (fs.existsSync(filename) === false) {
+            break;
+        }
+    }
+
+    return filename;
+}
+
 (async () => {
     const tweets = await getTweets(Commander.screenName);
 
@@ -259,6 +282,22 @@ function createFileName(): string {
     if (format === "json") {
         const fileName: string = createFileName();
         fs.writeFileSync(fileName, JSON.stringify(output, null, 4));
+    }
+    else if (format === "html") {
+        const dirName = createDirName();
+        fs.mkdirSync(dirName);
+
+        for (const staticFileName of ["icon.jpg", "normalize.css", "styles.css"]) {
+            const src = path.join("./templates", staticFileName);
+            const dest = path.join(dirName, staticFileName);
+
+            fs.copyFileSync(src, dest);
+        }
+
+        const data = output;
+        Nunjucks.configure("templates");
+        const indexFileName = path.join(dirName, "index.html");
+        fs.writeFileSync(indexFileName, Nunjucks.render("index.njk", data));
     }
     else {
         assert.fail(`Unsupported output format: "${format}"`);

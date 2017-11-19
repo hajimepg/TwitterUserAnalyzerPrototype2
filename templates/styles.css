@@ -1,0 +1,100 @@
+body {
+    font-family: system-ui, YuGothic;
+}
+
+#container {
+    display: grid;
+    grid-template-rows: auto 1fr 1fr 250px;
+    grid-template-columns: 230px 230px 790px;
+
+    padding: 20px;
+}
+
+#container > * {
+    overflow: hidden;
+    border-radius: 5px;
+    margin: 5px;
+    padding: 10px;
+}
+
+#name {
+    grid-row: 1;
+    grid-column: 1 / 4;
+}
+
+#icon {
+    grid-row: 2;
+    grid-column: 1;
+    padding: 0;
+}
+
+#icon > img {
+    border: 5px solid;
+    border-color: white;
+    border-radius: 10px;
+    width: 210px;
+    height: auto;
+}
+
+#basicInfo {
+    grid-row: 2;
+    grid-column: 2 / 4;
+}
+
+#basicInfo dl {
+    margin: 0;
+}
+
+#basicInfo dt {
+    font-weight: bold;
+}
+
+#mentions {
+    grid-row: 3;
+}
+
+#hashtags {
+    grid-row: 3;
+}
+
+#mentions h1, #hashtags h1, #heatmap h1, #activity h1 {
+    font-size: 1.1em;
+    margin: 0.15em;
+}
+
+#mentions table, #hashtags table {
+    width: 100%;
+}
+
+#mentions td:nth-child(2), #hashtags td:nth-child(2) {
+    text-align: right;
+}
+
+#heatmap {
+    grid-row: 3;
+    grid-column: 3;
+}
+
+#activity {
+    grid-row: 4;
+    grid-column: 3;
+}
+
+.userNameLink, .hashtagLink {
+    color: cornflowerblue;
+    font-weight: bold;
+}
+
+.subInfo {
+    color: dimgray;
+}
+
+.subInfo::before {
+    content: " ";
+}
+
+#container { background: lightgray; }
+
+#name, #basicInfo, #mentions, #hashtags, #heatmap, #activity {
+    background: whitesmoke;
+}
