@@ -294,6 +294,35 @@ function convertDailyTweetCountToHtmlOutput(dailyTweetCount: DailyTweetCount[]) 
     };
 }
 
+function convertDayHourTweetCountToHtmlOutput(dayHourTweetCount: DailyHourlyTweetCount[]) {
+    const result = lodash.cloneDeep(dayHourTweetCount);
+
+    for (const outer of result) {
+        for (const inner of outer.hours) {
+            let color: string = "";
+            if (inner.count >= 30) {
+                color = "#196127";
+            }
+            else if (inner.count >= 20) {
+                color = "#239a3b";
+            }
+            else if (inner.color >= 10) {
+                color = "#7bc96f";
+            }
+            else if (inner.count >= 1) {
+                color = "#c6e48b";
+            }
+            else {
+                color = "#ebedf0";
+            }
+
+            inner.color = color;
+        }
+    }
+
+    return result;
+}
+
 (async () => {
     const tweets = await getTweets(Commander.screenName);
 
@@ -328,6 +357,7 @@ function convertDailyTweetCountToHtmlOutput(dailyTweetCount: DailyTweetCount[]) 
         /* tslint:disable:object-literal-sort-keys */
         const data = {
             dailyTweetCount: convertDailyTweetCountToHtmlOutput(output.dailyTweetCount),
+            dayHourTweetCount: convertDayHourTweetCountToHtmlOutput(output.dayHourTweetCount),
             replyTweetCount: output.replyTweetCount.slice(0, 10),
             hashtagTweetCount: output.hashtagTweetCount.slice(0, 10),
         };
