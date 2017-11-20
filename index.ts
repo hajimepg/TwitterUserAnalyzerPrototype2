@@ -262,12 +262,12 @@ function createDirName(): string {
     return filename;
 }
 
-function convertDaiylTweetCountToHtmlOutput(dailyTweetCount: DailyTweetCount[]): object[] {
+function convertDailyTweetCountToHtmlOutput(dailyTweetCount: DailyTweetCount[]) {
     const JSTOffsetHours = 9;
     const maxDate = lodash.last(dailyTweetCount).date;
     const minDate = DateFns.format(DateFns.addHours(DateFns.subDays(maxDate, 30), JSTOffsetHours), "YYYY-MM-DD");
 
-    const result: object[] = [];
+    const result: Array<{ label: string, count: number, height?: number }> = [];
     for (const day of DateFns.eachDay(minDate, maxDate)) {
         const date = DateFns.format(DateFns.addHours(day, JSTOffsetHours), "YYYY-MM-DD");
 
@@ -280,7 +280,18 @@ function convertDaiylTweetCountToHtmlOutput(dailyTweetCount: DailyTweetCount[]):
         }
     }
 
-    return result;
+    const maxCount: number = lodash.maxBy(result, "count").count;
+    const halfCount: number = Math.round(maxCount / 2);
+
+    const maxHeight: number = 185;
+    for (const data of result) {
+        data.height = Math.round(maxHeight * data.count / maxCount);
+    }
+
+    return {
+        data: result,
+        verticalLabels: [0, halfCount, maxCount]
+    };
 }
 
 (async () => {
@@ -316,7 +327,7 @@ function convertDaiylTweetCountToHtmlOutput(dailyTweetCount: DailyTweetCount[]):
 
         /* tslint:disable:object-literal-sort-keys */
         const data = {
-            dailyTweetCount: convertDaiylTweetCountToHtmlOutput(output.dailyTweetCount),
+            dailyTweetCount: convertDailyTweetCountToHtmlOutput(output.dailyTweetCount),
             replyTweetCount: output.replyTweetCount.slice(0, 10),
             hashtagTweetCount: output.hashtagTweetCount.slice(0, 10),
         };

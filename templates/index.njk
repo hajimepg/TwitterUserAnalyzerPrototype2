@@ -329,21 +329,21 @@
                 <svg width="756" height="200">
                     <g transform="translate(40, 0)" >
                         {% set x = -24 %}
-                        {% for item in dailyTweetCount %}
-                            {% set height = item.count %}
+                        {% for item in dailyTweetCount.data %}
+                            {% set height = item.height %}
                             {% set x = x + 24 %}
-                            {% set y = 185 - item.count %}
+                            {% set y = 185 - item.height %}
                             <rect width="20" height="{{ height }}" x="{{ x }}" y="{{ y }}" fill="#dedede" />
                         {% endfor %}
                     </g>
 
-                    <text x="30" y="15" fill="#767676" font-size="14px" text-anchor="end">180</text>
-                    <text x="30" y="105" fill="#767676" font-size="14px" text-anchor="end">90</text>
-                    <text x="30" y="185" fill="#767676" font-size="14px" text-anchor="end">0</text>
+                    <text x="30" y="15" fill="#767676" font-size="14px" text-anchor="end">{{ dailyTweetCount.verticalLabels[2] }}</text>
+                    <text x="30" y="105" fill="#767676" font-size="14px" text-anchor="end">{{ dailyTweetCount.verticalLabels[1] }}</text>
+                    <text x="30" y="185" fill="#767676" font-size="14px" text-anchor="end">{{ dailyTweetCount.verticalLabels[0] }}</text>
 
                     <g transform="translate(42, 200)" >
                         {% set x = -24 %}
-                        {% for item in dailyTweetCount %}
+                        {% for item in dailyTweetCount.data %}
                             {% set x = x + 24 %}
                             <text x="{{ x }}" y="0" fill="#767676" font-size="14px">{{ item.label }}</text>
                         {% endfor %}
