@@ -13,6 +13,7 @@ import * as Twitter from "twitter";
 import DailyTweetCount from "./dailyTweetCount";
 import DailyHourlyTweetCount from "./daylyHourlyTweetCount";
 import GetUserTimeLineOptions from "./getUserTimeLineOptions";
+import Profile from "./profile";
 import Tweet from "./tweet";
 
 import Stub from "./stub";
@@ -41,6 +42,19 @@ else {
         access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
         consumer_key: process.env.TWITTER_CONSUMER_KEY,
         consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+    });
+}
+
+async function getProfile() {
+    return new Promise<Profile>((resolve, reject) => {
+        client.get("account/verify_credentials", (error, response) => {
+            if (error) {
+                reject(error);
+                return;
+            }
+
+            resolve(response);
+        });
     });
 }
 
@@ -326,6 +340,7 @@ function convertDayHourTweetCountToHtmlOutput(dayHourTweetCount: DailyHourlyTwee
 }
 
 (async () => {
+    const profile = await getProfile();
     const tweets = await getTweets(Commander.screenName);
 
     if (Commander.createStub) {
