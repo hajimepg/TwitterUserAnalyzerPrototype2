@@ -45,9 +45,21 @@ else {
     });
 }
 
-async function getProfile() {
+async function getProfile(screenName?: string) {
+    let endpoint: string;
+    let options: object;
+
+    if (screenName === undefined) {
+        endpoint = "account/verify_credentials";
+        options = {};
+    }
+    else {
+        endpoint = "users/show";
+        options = { screen_name: screenName };
+    }
+
     return new Promise<Profile>((resolve, reject) => {
-        client.get("account/verify_credentials", (error, response) => {
+        client.get(endpoint, options, (error, response) => {
             if (error) {
                 reject(error);
                 return;
@@ -340,7 +352,7 @@ function convertDayHourTweetCountToHtmlOutput(dayHourTweetCount: DailyHourlyTwee
 }
 
 (async () => {
-    const profile = await getProfile();
+    const profile = await getProfile(Commander.screenName);
     const tweets = await getTweets(Commander.screenName);
 
     if (Commander.createStub) {
