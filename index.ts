@@ -362,6 +362,15 @@ function convertDayHourTweetCountToHtmlOutput(dayHourTweetCount: DailyHourlyTwee
 
     /* tslint:disable:object-literal-sort-keys */
     const output = {
+        profile: {
+            screenName: profile.screen_name,
+            name: profile.name,
+            statusesCount: profile.statuses_count,
+            friendsCount: profile.friends_count,
+            followersCount: profile.followers_count,
+            createdAt: profile.created_at,
+            description: profile.description,
+        },
         dailyTweetCount: summarizeDailyTweetCount(tweets),
         dayHourTweetCount: summarizeDayHourTweetCount(
             tweets,
@@ -390,6 +399,7 @@ function convertDayHourTweetCountToHtmlOutput(dayHourTweetCount: DailyHourlyTwee
 
         /* tslint:disable:object-literal-sort-keys */
         const data = {
+            profile: output.profile,
             dailyTweetCount: convertDailyTweetCountToHtmlOutput(output.dailyTweetCount),
             dayHourTweetCount: convertDayHourTweetCountToHtmlOutput(output.dayHourTweetCount),
             replyTweetCount: output.replyTweetCount.slice(0, 10),

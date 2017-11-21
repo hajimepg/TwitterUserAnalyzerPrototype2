@@ -9,7 +9,7 @@
 
     <body>
         <div id="container">
-            <h1 id="name">hajimepg はじぴー</h1>
+            <h1 id="name">{{ profile.screenName }} {{ profile.name }}</h1>
 
             <div id="icon">
                 <img src="icon.jpg">
@@ -18,22 +18,19 @@
             <div id="basicInfo">
                 <dl>
                     <dt>Tweets</dt>
-                    <dd>489,145<span class="subInfo">(152/Day)<span></dd>
+                    <dd>{{ profile.statusesCount }}<span class="subInfo">(152/Day)<span></dd>
 
                     <dt>Following</dt>
-                    <dd>792<span class="subInfo">(123 Mutual Following)</span></dd>
+                    <dd>{{ profile.friendsCount }}<span class="subInfo">(123 Mutual Following)</span></dd>
 
                     <dt>Follower</dt>
-                    <dd>1698<span class="subInfo">(234 Mutual Followers)</span></dd>
+                    <dd>{{ profile.followersCount }}<span class="subInfo">(234 Mutual Followers)</span></dd>
 
                     <dt>Join</dt>
-                    <dd>Apr 2007</dd>
+                    <dd>{{ profile.createdAt }}</dd>
 
                     <dt>Bio</dt>
-                    <dd>
-                        フィギュアレビューブログはじめました<br/>
-                        http://figure.studiohff.net/
-                    </dd>
+                    <dd>{{ profile.description }}</dd>
                 </dl>
             </div>
 
