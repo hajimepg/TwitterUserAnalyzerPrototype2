@@ -356,7 +356,8 @@ function convertDayHourTweetCountToHtmlOutput(dayHourTweetCount: DailyHourlyTwee
     const tweets = await getTweets(Commander.screenName);
 
     if (Commander.createStub) {
-        fs.writeFileSync("./stub.json", JSON.stringify(tweets, null, 4));
+        fs.writeFileSync("./stubProfile.json", JSON.stringify(profile, null, 4));
+        fs.writeFileSync("./stubTweets.json", JSON.stringify(tweets, null, 4));
     }
 
     /* tslint:disable:object-literal-sort-keys */

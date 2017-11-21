@@ -1,11 +1,19 @@
 import * as fs from "fs";
 
+import Profile from "./profile";
 import Tweet from "./tweet";
 
+/* tslint:disable:variable-name */
+class Parameters {
+    public screen_name?: string;
+    public max_id?: number;
+}
+/* tslint:enable:variable-name */
+
 export default {
-    get: (endpoint: string, parameters: { max_id?: number }, callback: (error, response) => void) => {
+    get: (endpoint: string, parameters: Parameters, callback: (error, response) => void) => {
         if (endpoint === "statuses/user_timeline") {
-            const fileContents = fs.readFileSync("./stub.json", { encoding: "utf8" });
+            const fileContents = fs.readFileSync("./stubTweets.json", { encoding: "utf8" });
             const tweets: Tweet[] = JSON.parse(fileContents);
 
             let beginIndex: number;
@@ -23,6 +31,12 @@ export default {
             const response: Tweet[] = tweets.slice(beginIndex, endIndex); // Note: endIndexの要素は含まない
 
             callback(null, response);
+        }
+        else if (endpoint === "account/verify_credentials" || endpoint === "users/show") {
+            const fileContents = fs.readFileSync("./stubProfile.json", { encoding: "utf8" });
+            const profile: Profile = JSON.parse(fileContents);
+
+            callback(null, profile);
         }
     }
 };
