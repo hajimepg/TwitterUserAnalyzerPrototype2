@@ -12,6 +12,7 @@ import * as Twitter from "twitter";
 
 import DailyTweetCount from "./dailyTweetCount";
 import DailyHourlyTweetCount from "./daylyHourlyTweetCount";
+import { downloadProfileImage } from "./downloadProfileImage";
 import GetUserTimeLineOptions from "./getUserTimeLineOptions";
 import Profile from "./profile";
 import Tweet from "./tweet";
@@ -390,16 +391,19 @@ function convertDayHourTweetCountToHtmlOutput(dayHourTweetCount: DailyHourlyTwee
         const dirName = createDirName();
         fs.mkdirSync(dirName);
 
-        for (const staticFileName of ["icon.jpg", "normalize.css", "styles.css"]) {
+        for (const staticFileName of ["normalize.css", "styles.css"]) {
             const src = path.join("./templates", staticFileName);
             const dest = path.join(dirName, staticFileName);
 
             fs.copyFileSync(src, dest);
         }
 
+        const iconFileName = await downloadProfileImage(profile.profile_image_url, dirName, "icon");
+
         /* tslint:disable:object-literal-sort-keys */
         const data = {
             profile: output.profile,
+            iconFileName,
             dailyTweetCount: convertDailyTweetCountToHtmlOutput(output.dailyTweetCount),
             dayHourTweetCount: convertDayHourTweetCountToHtmlOutput(output.dayHourTweetCount),
             replyTweetCount: output.replyTweetCount.slice(0, 10),
