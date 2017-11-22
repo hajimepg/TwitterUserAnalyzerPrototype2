@@ -407,9 +407,12 @@ function convertDayHourTweetCountToHtmlOutput(dayHourTweetCount: DailyHourlyTwee
         };
         /* tslint:enable:object-literal-sort-keys */
 
-        Nunjucks.configure("templates");
+        const env = Nunjucks.configure("templates");
+        env.addFilter("numberFormat", (num: number) => {
+            return num.toLocaleString();
+        });
         const indexFileName = path.join(dirName, "index.html");
-        fs.writeFileSync(indexFileName, Nunjucks.render("index.njk", data));
+        fs.writeFileSync(indexFileName, env.render("index.njk", data));
     }
     else {
         assert.fail(`Unsupported output format: "${format}"`);

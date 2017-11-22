@@ -18,13 +18,13 @@
             <div id="basicInfo">
                 <dl>
                     <dt>Tweets</dt>
-                    <dd>{{ profile.statusesCount }}<span class="subInfo">(152/Day)<span></dd>
+                    <dd>{{ profile.statusesCount | numberFormat }}<span class="subInfo">(152/Day)<span></dd>
 
                     <dt>Following</dt>
-                    <dd>{{ profile.friendsCount }}<span class="subInfo">(123 Mutual Following)</span></dd>
+                    <dd>{{ profile.friendsCount | numberFormat }}<span class="subInfo">(123 Mutual Following)</span></dd>
 
                     <dt>Follower</dt>
-                    <dd>{{ profile.followersCount }}<span class="subInfo">(234 Mutual Followers)</span></dd>
+                    <dd>{{ profile.followersCount | numberFormat }}<span class="subInfo">(234 Mutual Followers)</span></dd>
 
                     <dt>Join</dt>
                     <dd>{{ profile.createdAt }}</dd>
@@ -40,7 +40,7 @@
                     {% for item in replyTweetCount %}
                         <tr>
                             <td><a href="https://twitter.com/{{ item.screen_name }}" target="_blank" class="userNameLink">@{{ item.screen_name }}</a></td>
-                            <td>{{ item.count }}</td>
+                            <td>{{ item.count | numberFormat }}</td>
                         </tr>
                     {% endfor %}
                 </tbody></table>
@@ -52,7 +52,7 @@
                     {% for item in hashtagTweetCount %}
                         <tr>
                             <td><span class="hashtagLink">#{{ item.hashtag }}</span></td>
-                            <td>{{ item.count }}</td>
+                            <td>{{ item.count | numberFormat }}</td>
                         </tr>
                     {% endfor %}
                 </tbody></table>
