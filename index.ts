@@ -408,9 +408,8 @@ function convertDayHourTweetCountToHtmlOutput(dayHourTweetCount: DailyHourlyTwee
         /* tslint:enable:object-literal-sort-keys */
 
         const env = Nunjucks.configure("templates");
-        env.addFilter("numberFormat", (num: number) => {
-            return num.toLocaleString();
-        });
+        env.addFilter("numberFormat", (num: number) => num.toLocaleString());
+        env.addFilter("dateFormat", (date: Date) => DateFns.format(date, "YYYY-MM-DD"));
         const indexFileName = path.join(dirName, "index.html");
         fs.writeFileSync(indexFileName, env.render("index.njk", data));
     }
