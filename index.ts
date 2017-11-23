@@ -251,16 +251,16 @@ function summarizeHashtagCount(tweets: Tweet[]) {
     return result;
 }
 
-function createFileName(): string {
+function createFileName(screenName: string): string {
     const currentDate: string = DateFns.format(new Date(), "YYYY-MM-DD");
     let filename: string;
 
     for (let i: number = 0; ; i++) {
         if (i === 0) {
-            filename = `./output-${currentDate}.json`;
+            filename = `./${screenName}-${currentDate}.json`;
         }
         else {
-            filename = `./output-${currentDate}_${i}.json`;
+            filename = `./${screenName}-${currentDate}_${i}.json`;
         }
 
         if (fs.existsSync(filename) === false) {
@@ -271,16 +271,16 @@ function createFileName(): string {
     return filename;
 }
 
-function createDirName(): string {
+function createDirName(screenName: string): string {
     const currentDate: string = DateFns.format(new Date(), "YYYY-MM-DD");
     let filename: string;
 
     for (let i: number = 0; ; i++) {
         if (i === 0) {
-            filename = `./output-${currentDate}`;
+            filename = `./${screenName}-${currentDate}`;
         }
         else {
-            filename = `./output-${currentDate}_${i}`;
+            filename = `./${screenName}-${currentDate}_${i}`;
         }
 
         if (fs.existsSync(filename) === false) {
@@ -384,11 +384,11 @@ function convertDayHourTweetCountToHtmlOutput(dayHourTweetCount: DailyHourlyTwee
     /* tslint:enable:object-literal-sort-keys */
 
     if (format === "json") {
-        const fileName: string = createFileName();
+        const fileName: string = createFileName(output.profile.screenName);
         fs.writeFileSync(fileName, JSON.stringify(output, null, 4));
     }
     else if (format === "html") {
-        const dirName = createDirName();
+        const dirName = createDirName(output.profile.screenName);
         fs.mkdirSync(dirName);
 
         for (const staticFileName of ["normalize.css", "styles.css"]) {
