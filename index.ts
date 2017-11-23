@@ -361,12 +361,16 @@ function convertDayHourTweetCountToHtmlOutput(dayHourTweetCount: DailyHourlyTwee
         fs.writeFileSync("./stubTweets.json", JSON.stringify(tweets, null, 4));
     }
 
+    const daysFromCreateAccount = DateFns.differenceInCalendarDays(new Date(), profile.created_at);
+    const tweetsPerDay = Math.round(profile.statuses_count / daysFromCreateAccount);
+
     /* tslint:disable:object-literal-sort-keys */
     const output = {
         profile: {
             screenName: profile.screen_name,
             name: profile.name,
             statusesCount: profile.statuses_count,
+            tweetsPerDay,
             friendsCount: profile.friends_count,
             followersCount: profile.followers_count,
             createdAt: profile.created_at,

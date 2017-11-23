@@ -18,7 +18,7 @@
             <div id="basicInfo">
                 <dl>
                     <dt>Tweets</dt>
-                    <dd>{{ profile.statusesCount | numberFormat }}<span class="subInfo">(152/Day)<span></dd>
+                    <dd>{{ profile.statusesCount | numberFormat }}<span class="subInfo">({{ profile.tweetsPerDay | numberFormat }}/Day)<span></dd>
 
                     <dt>Following</dt>
                     <dd>{{ profile.friendsCount | numberFormat }}<span class="subInfo">(123 Mutual Following)</span></dd>
