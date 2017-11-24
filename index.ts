@@ -17,6 +17,7 @@ import GetUserTimeLineOptions from "./getUserTimeLineOptions";
 import Profile from "./profile";
 import Tweet from "./tweet";
 
+import * as FileSystemUtil from "./fileSystemUtil";
 import * as HtmlConverter from "./htmlConverter";
 import * as Summarize from "./summarize";
 
@@ -125,46 +126,6 @@ async function getTweets(screenName: string) {
     });
 }
 
-function createFileName(screenName: string): string {
-    const currentDate: string = DateFns.format(new Date(), "YYYY-MM-DD");
-    let filename: string;
-
-    for (let i: number = 0; ; i++) {
-        if (i === 0) {
-            filename = `./${screenName}-${currentDate}.json`;
-        }
-        else {
-            filename = `./${screenName}-${currentDate}_${i}.json`;
-        }
-
-        if (fs.existsSync(filename) === false) {
-            break;
-        }
-    }
-
-    return filename;
-}
-
-function createDirName(screenName: string): string {
-    const currentDate: string = DateFns.format(new Date(), "YYYY-MM-DD");
-    let filename: string;
-
-    for (let i: number = 0; ; i++) {
-        if (i === 0) {
-            filename = `./${screenName}-${currentDate}`;
-        }
-        else {
-            filename = `./${screenName}-${currentDate}_${i}`;
-        }
-
-        if (fs.existsSync(filename) === false) {
-            break;
-        }
-    }
-
-    return filename;
-}
-
 (async () => {
     const profile = await getProfile(Commander.screenName);
     const tweets = await getTweets(Commander.screenName);
@@ -201,11 +162,11 @@ function createDirName(screenName: string): string {
     /* tslint:enable:object-literal-sort-keys */
 
     if (format === "json") {
-        const fileName: string = createFileName(output.profile.screenName);
+        const fileName: string = FileSystemUtil.createFileName(output.profile.screenName);
         fs.writeFileSync(fileName, JSON.stringify(output, null, 4));
     }
     else if (format === "html") {
-        const dirName = createDirName(output.profile.screenName);
+        const dirName = FileSystemUtil.createDirName(output.profile.screenName);
         fs.mkdirSync(dirName);
 
         for (const staticFileName of ["normalize.css", "styles.css"]) {
