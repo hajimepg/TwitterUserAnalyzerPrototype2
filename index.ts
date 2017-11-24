@@ -53,10 +53,18 @@ else {
 (async () => {
     const profile = await TwitterGateway.getProfile(client, Commander.screenName);
     const tweets = await TwitterGateway.getTweets(client, Commander.screenName);
+    const yourFollowers = await TwitterGateway.getFollowers(client);
+    const yourFriends = await TwitterGateway.getFriends(client);
+    const targetFollowers = await TwitterGateway.getFollowers(client, Commander.screenName);
+    const targetFriends = await TwitterGateway.getFriends(client, Commander.screenName);
 
     if (Commander.createStub) {
         fs.writeFileSync("./stubProfile.json", JSON.stringify(profile, null, 4));
         fs.writeFileSync("./stubTweets.json", JSON.stringify(tweets, null, 4));
+        fs.writeFileSync("./stubYourFollowers.json", JSON.stringify(yourFollowers, null, 4));
+        fs.writeFileSync("./stubYourFriends.json", JSON.stringify(yourFriends, null, 4));
+        fs.writeFileSync("./stubTargetFollowers.json", JSON.stringify(targetFollowers, null, 4));
+        fs.writeFileSync("./stubTargetFriends.json", JSON.stringify(targetFriends, null, 4));
     }
 
     const daysFromCreateAccount = DateFns.differenceInCalendarDays(new Date(), profile.created_at);

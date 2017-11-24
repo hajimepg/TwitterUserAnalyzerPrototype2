@@ -3,6 +3,7 @@ import * as lodash from "lodash";
 import GetUserTimeLineOptions from "./getUserTimeLineOptions";
 import Profile from "./profile";
 import Tweet from "./tweet";
+import User from "./user";
 
 export async function getProfile(client, screenName?: string) {
     let endpoint: string;
@@ -78,4 +79,44 @@ export async function getTweets(client, screenName: string) {
 
         getTweetsInternal();
     });
+}
+
+async function getUserList(client, endpoint: string, screenName?: string) {
+    return new Promise<User[]>((resolve, reject) => {
+        let users: User[] = [];
+
+        function getUserListInternal(cursor: number) {
+            const options: { skip_status, count, cursor, screen_name? } = { skip_status: true, count: 200, cursor };
+            if (screenName !== undefined) {
+                options.screen_name = screenName;
+            }
+
+            client.get(endpoint, options, (error, response) => {
+                if (error) {
+                    reject(error);
+                    return;
+                }
+
+                users = users.concat(response.users);
+
+                console.log(`next_cursor=${response.next_cursor}`);
+                if (response.next_cursor === 0) {
+                    resolve(users);
+                }
+                else {
+                    getUserListInternal(response.next_cursor);
+                }
+            });
+        }
+
+        getUserListInternal(-1);
+    });
+}
+
+export async function getFollowers(client, screenName?: string) {
+    return getUserList(client, "followers/list", screenName);
+}
+
+export async function getFriends(client, screenName?: string) {
+    return getUserList(client, "friends/list", screenName);
 }

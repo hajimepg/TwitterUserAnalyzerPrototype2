@@ -2,9 +2,11 @@ import * as fs from "fs";
 
 import Profile from "./profile";
 import Tweet from "./tweet";
+import User from "./user";
 
 /* tslint:disable:variable-name */
 class Parameters {
+    public cursor?: number;
     public screen_name?: string;
     public max_id?: number;
 }
@@ -37,6 +39,27 @@ export default {
             const profile: Profile = JSON.parse(fileContents);
 
             callback(null, profile);
+        }
+        else if (endpoint === "followers/list" || endpoint === "friends/list") {
+            let fileName: string;
+            if (endpoint === "followers/list") {
+                fileName = (parameters.screen_name === undefined) ?
+                    "./stubYourFollowers.json" : "./stubTargetFollowers.json";
+            }
+            else {
+                fileName = (parameters.screen_name === undefined) ?
+                    "./stubYourFriends.json" : "./stubTargetFriends.json";
+            }
+
+            const fileContents = fs.readFileSync(fileName, { encoding: "utf8" });
+            const users: User[] = JSON.parse(fileContents);
+
+            const beginIndex = (parameters.cursor === undefined || parameters.cursor === -1) ? 0 : parameters.cursor;
+            const endIndex = Math.min(beginIndex + 200, users.length);
+            const responseUsers = users.slice(beginIndex, endIndex); // Note: endIndexの要素は含まない
+            const nextCursor = (endIndex >= users.length) ? 0 : endIndex;
+
+            callback(null, { next_cursor: nextCursor, users: responseUsers });
         }
     }
 };
