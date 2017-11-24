@@ -28,6 +28,7 @@ Commander
     .option("--screen-name <screen-name>")
     .option("--create-stub")
     .option("--use-stub")
+    .option("--deep-analyze")
     .parse(process.argv);
 
 const format = Commander.format || "html";
@@ -53,38 +54,24 @@ else {
 (async () => {
     const profile = await TwitterGateway.getProfile(client, Commander.screenName);
     const tweets = await TwitterGateway.getTweets(client, Commander.screenName);
-    const yourFollowers = await TwitterGateway.getFollowers(client);
-    const yourFriends = await TwitterGateway.getFriends(client);
-    const targetFollowers = await TwitterGateway.getFollowers(client, Commander.screenName);
-    const targetFriends = await TwitterGateway.getFriends(client, Commander.screenName);
 
     if (Commander.createStub) {
         fs.writeFileSync("./stubProfile.json", JSON.stringify(profile, null, 4));
         fs.writeFileSync("./stubTweets.json", JSON.stringify(tweets, null, 4));
-        fs.writeFileSync("./stubYourFollowers.json", JSON.stringify(yourFollowers, null, 4));
-        fs.writeFileSync("./stubYourFriends.json", JSON.stringify(yourFriends, null, 4));
-        fs.writeFileSync("./stubTargetFollowers.json", JSON.stringify(targetFollowers, null, 4));
-        fs.writeFileSync("./stubTargetFriends.json", JSON.stringify(targetFriends, null, 4));
     }
 
     const daysFromCreateAccount = DateFns.differenceInCalendarDays(new Date(), profile.created_at);
     const tweetsPerDay = Math.round(profile.statuses_count / daysFromCreateAccount);
 
-    const userComparator = (a, b) => a.screen_name === b.screen_name;
-    const mutualFollowers = lodash.intersectionWith(targetFollowers, yourFollowers, userComparator);
-    const mutualFriends = lodash.intersectionWith(targetFriends, yourFriends, userComparator);
-
     /* tslint:disable:object-literal-sort-keys */
-    const output = {
+    const output: any = {
         profile: {
             screenName: profile.screen_name,
             name: profile.name,
             statusesCount: profile.statuses_count,
             tweetsPerDay,
             friendsCount: profile.friends_count,
-            mutualFriends,
             followersCount: profile.followers_count,
-            mutualFollowers,
             createdAt: profile.created_at,
             description: profile.description,
         },
@@ -98,6 +85,24 @@ else {
         hashtagTweetCount: Summarize.summarizeHashtagCount(tweets),
     };
     /* tslint:enable:object-literal-sort-keys */
+
+    if (Commander.deepAnalyze) {
+        const yourFollowers = await TwitterGateway.getFollowers(client);
+        const yourFriends = await TwitterGateway.getFriends(client);
+        const targetFollowers = await TwitterGateway.getFollowers(client, Commander.screenName);
+        const targetFriends = await TwitterGateway.getFriends(client, Commander.screenName);
+
+        if (Commander.createStub) {
+            fs.writeFileSync("./stubYourFollowers.json", JSON.stringify(yourFollowers, null, 4));
+            fs.writeFileSync("./stubYourFriends.json", JSON.stringify(yourFriends, null, 4));
+            fs.writeFileSync("./stubTargetFollowers.json", JSON.stringify(targetFollowers, null, 4));
+            fs.writeFileSync("./stubTargetFriends.json", JSON.stringify(targetFriends, null, 4));
+        }
+
+        const userComparator = (a, b) => a.screen_name === b.screen_name;
+        output.profile.mutualFollowers = lodash.intersectionWith(targetFollowers, yourFollowers, userComparator);
+        output.profile.mutualFriends = lodash.intersectionWith(targetFriends, yourFriends, userComparator);
+    }
 
     if (format === "json") {
         const fileName: string = FileSystemUtil.createFileName(output.profile.screenName);

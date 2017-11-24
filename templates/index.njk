@@ -21,10 +21,20 @@
                     <dd>{{ profile.statusesCount | numberFormat }}<span class="subInfo">({{ profile.tweetsPerDay | numberFormat }}/Day)<span></dd>
 
                     <dt>Following</dt>
-                    <dd>{{ profile.friendsCount | numberFormat }}<span class="subInfo">({{ profile.mutualFriends | length | numberFormat }} Mutual Following)</span></dd>
+                    <dd>
+                        {{ profile.friendsCount | numberFormat }}
+                        {% if profile.mutualFriends %}
+                            <span class="subInfo">({{ profile.mutualFriends | length | numberFormat }} Mutual Following)</span>
+                        {% endif %}
+                    </dd>
 
                     <dt>Follower</dt>
-                    <dd>{{ profile.followersCount | numberFormat }}<span class="subInfo">({{ profile.mutualFollowers | length | numberFormat }} Mutual Followers)</span></dd>
+                    <dd>
+                        {{ profile.followersCount | numberFormat }}
+                        {% if profile.mutualFollowers %}
+                            <span class="subInfo">({{ profile.mutualFollowers | length | numberFormat }} Mutual Followers)</span>
+                        {% endif %}
+                    </dd>
 
                     <dt>Join</dt>
                     <dd>{{ profile.createdAt | dateFormat }}</dd>
