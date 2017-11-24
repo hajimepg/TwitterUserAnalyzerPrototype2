@@ -70,6 +70,10 @@ else {
     const daysFromCreateAccount = DateFns.differenceInCalendarDays(new Date(), profile.created_at);
     const tweetsPerDay = Math.round(profile.statuses_count / daysFromCreateAccount);
 
+    const userComparator = (a, b) => a.screen_name === b.screen_name;
+    const mutualFollowers = lodash.intersectionWith(targetFollowers, yourFollowers, userComparator);
+    const mutualFriends = lodash.intersectionWith(targetFriends, yourFriends, userComparator);
+
     /* tslint:disable:object-literal-sort-keys */
     const output = {
         profile: {
@@ -78,7 +82,9 @@ else {
             statusesCount: profile.statuses_count,
             tweetsPerDay,
             friendsCount: profile.friends_count,
+            mutualFriends,
             followersCount: profile.followers_count,
+            mutualFollowers,
             createdAt: profile.created_at,
             description: profile.description,
         },
